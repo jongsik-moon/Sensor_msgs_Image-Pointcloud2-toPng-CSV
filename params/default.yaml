@@ -1,0 +1,7 @@
+Dataset:
+  inputImgDir: "/home/jongsik/temp_work/kitti2bag/2011_09_30/2011_09_30_drive_0020_sync/image_02/data_temp/"
+  inputLidarDir: "/home/jongsik/temp_work/kitti2bag/2011_09_30/2011_09_30_drive_0020_sync/velodyne_points/data_temp/"
+  outputDir: "/home/jongsik/modu_ws/bag2Saved/"
+  imgTopicName: "/image_raw"
+  lidarTopicName: "/velodyne_points"
+  hz: 10.0
