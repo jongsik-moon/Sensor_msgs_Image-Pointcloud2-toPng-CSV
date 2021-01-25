@@ -11,8 +11,6 @@
 
 struct DatasetConfig
 {
-  std::string inputImgDir;
-  std::string inputLidarDir;
   std::string outputDir;
   std::string imgTopicName;
   std::string lidarTopicName;
