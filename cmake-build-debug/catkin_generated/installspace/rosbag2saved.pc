@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: rosbag2saved
-Description: Description of rosbag2saved
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
