@@ -9,6 +9,8 @@ std::mutex pointcloudLock_;
 
 Logger::Logger(Config& config)
   : config_(config)
+  , imgLen(1000000)
+  , lidarLen(1000000)
 {
   std::string imgTopic(config_.datasetConfig.imgTopicName);
   std::string pcTopic(config_.datasetConfig.lidarTopicName);
@@ -31,7 +33,7 @@ void Logger::ImgCallBack(const sensor_msgs::ImageConstPtr &img)
 {
   cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img, "bgr8");
   inputImg_ = cv_ptr->image.clone();
-  imgTime_ = img->header.stamp;
+  imgTime_ = ros::Time::now();
 }
 
 void Logger::PointCloudCallBack(const sensor_msgs::PointCloud2ConstPtr &pointcloud)
@@ -39,7 +41,7 @@ void Logger::PointCloudCallBack(const sensor_msgs::PointCloud2ConstPtr &pointclo
   pcl::PCLPointCloud2 pcl_pc2;
   pcl_conversions::toPCL(*pointcloud, pcl_pc2);
   pcl::fromPCLPointCloud2(pcl_pc2, inputPointcloud_);
-  pointcloudTime_ = pointcloud->header.stamp;
+  pointcloudTime_ = ros::Time::now();
 }
 
 void Logger::Img2Container()
@@ -48,7 +50,8 @@ void Logger::Img2Container()
   if(!inputImg_.empty())
   {
     imgQueue_.push(inputImg_);
-    imgNameQueue_.push(GetTimeFromROSTIME(imgTime_));
+    imgNameQueue_.push(std::to_string(imgLen));
+    imgLen++;
   }
 }
 
@@ -58,7 +61,8 @@ void Logger::pointcloud2Container()
   if(inputPointcloud_.points.size() != 0)
   {
     pointcloudQueue_.push(inputPointcloud_);
-    pointcloudNameQueue_.push(GetTimeFromROSTIME(pointcloudTime_));
+    pointcloudNameQueue_.push(std::to_string(lidarLen));
+    lidarLen++;
   }
 }
 
@@ -90,7 +94,7 @@ void Logger::WriteImgData()
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     std::string currTime = GetCurrentTimeString();
-    cv::imwrite(imgDir + "/" + pointcloudTimeStr_ + ".png", savingImg);
+    cv::imwrite(imgDir + "/" + imgTimeStr_ + ".png", savingImg);
   }
 }
 
@@ -101,6 +105,7 @@ bool Logger::GetImgDataFromContainer()
     savingImg = imgQueue_.front();
     imgQueue_.pop();
     imgTimeStr_ = imgNameQueue_.front();
+    std::cout << imgTimeStr_ << std::endl;
     imgNameQueue_.pop();
     return true;
   }

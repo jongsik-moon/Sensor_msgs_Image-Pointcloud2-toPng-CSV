@@ -66,5 +66,8 @@ private:
 
   std::string imgDir;
   std::string lidarDir;
+
+  int imgLen;
+  int lidarLen;
 };
 #endif //ROSBAG2SAVED_LOGGER_H
